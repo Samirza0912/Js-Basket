@@ -36,7 +36,8 @@ let choice=[
 
 for (let index = 0; index < addbas.length; index++) {
     addbas[index].addEventListener("click", ()=>{
-        Count();
+        Count(choice[index]);
+        TotalCost(choice[index]);
     })
 }
 function OnLoadProCount() {
@@ -45,7 +46,7 @@ function OnLoadProCount() {
         document.querySelector(".nav-item span").textContent=procount;
     }
 }
-function Count() {
+function Count(product) {
     let procount=localStorage.getItem("Product Count");
     procount=parseInt(procount);
     if (procount) {
@@ -56,5 +57,42 @@ function Count() {
         localStorage.setItem("Product Count", 1);
         document.querySelector(".nav-item span").textContent=1;
     }
+    setItems(product);
+}
+
+function setItems(product){
+    let basItems=localStorage.getItem("choicesinbasket");
+    basItems=JSON.parse(basItems);
+    if (basItems != null) {
+        if (basItems[product.Name]==undefined) {
+            basItems={
+                ...basItems,
+                [product.Name]: product
+            }
+        }
+        basItems[product.Name].inBasket+=1;
+
+    } else{
+        product.inBasket=1;
+        basItems={
+            [product.Name]:product
+    }
+ 
+    }
+    localStorage.setItem("choicesinbasket", JSON.stringify(basItems));
+
+}
+function TotalCost(product){
+    let basCost=localStorage.getItem("totalCost");
+
+    if (basCost!=null) {
+        basCost=parseInt(basCost);
+        localStorage.setItem("totalCost", basCost + 
+        product.Price);
+    }
+    else{
+        localStorage.setItem("totalCost", product.Price);
+    }
+
 }
 OnLoadProCount();
